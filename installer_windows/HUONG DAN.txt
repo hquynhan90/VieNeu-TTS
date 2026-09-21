@@ -1,0 +1,53 @@
+﻿VIENEU TTS - TẠO GIỌNG ĐỌC TIẾNG VIỆT TRÊN MÁY TÍNH (MIỄN PHÍ, KHÔNG GIỚI HẠN)
+==========================================================================
+
+Công cụ mã nguồn mở VieNeu-TTS (github.com/pnnbao97/VieNeu-TTS), giấy phép Apache 2.0.
+Bộ cài này chỉ giúp cài đặt và mở công cụ trên Windows cho tiện.
+
+
+YÊU CẦU MÁY
+-----------
+- Windows 10 / 11, có internet khi cài.
+- Còn trống khoảng 4 GB ổ đĩa.
+- RAM nên từ 8 GB trở lên. Máy chỉ có CPU vẫn chạy được, chỉ chậm hơn máy có card NVIDIA.
+
+
+CÁCH CÀI (làm 1 lần)
+--------------------
+1. Trên trang GitHub, bấm nút xanh "Code" -> "Download ZIP".
+2. Giải nén file ZIP ra một thư mục (ví dụ: D:\VieNeu-TTS). Đừng chạy thẳng trong file ZIP.
+3. Mở thư mục "installer_windows" và bấm đúp file  "Cai dat VieNeu TTS.bat".
+4. Chờ vài phút cho đến khi hiện chữ "XONG!". Trên Desktop sẽ có icon "Mo VieNeu TTS".
+
+Nếu Windows hiện cảnh báo màu xanh (SmartScreen), bấm "More info" -> "Run anyway".
+Các file .bat là chữ thường, bạn có thể mở bằng Notepad để tự đọc kiểm tra trước khi chạy.
+
+
+CÁCH DÙNG (mỗi lần)
+-------------------
+1. Bấm đúp icon "Mo VieNeu TTS" trên Desktop. Một cửa sổ đen hiện ra và trình duyệt tự mở.
+2. Trong trang web: bấm nút "Tải Model" (lần đầu sẽ tải model khoảng 1 GB, cần internet),
+   chờ thông báo "Model đã tải thành công".
+3. Dán văn bản vào ô "Văn bản", chọn giọng ở ô "Giọng mẫu" (có 25 giọng Bắc / Trung / Nam),
+   bấm "Bắt đầu".
+4. Nghe xong bấm "Tải xuống file Audio" để lưu file giọng về máy.
+5. DÙNG XONG: bấm dấu X đóng cửa sổ đen là tắt hẳn. Chỉ đóng tab trình duyệt thì công cụ VẪN CHẠY ngầm.
+
+Mẹo: nếu trình duyệt có bật Google Dịch, hãy tắt dịch cho trang này để không bị đổi chữ.
+Chèn cảm xúc bằng cách gõ [cười] [hắng giọng] [thở dài] vào văn bản (tính năng thử nghiệm).
+
+
+CÀI THỦ CÔNG (nếu file cài báo lỗi)
+-----------------------------------
+1. Cài "uv" theo hướng dẫn tại docs.astral.sh/uv (có lệnh cài cho Windows).
+2. Mở PowerShell trong thư mục đã giải nén và chạy:   uv sync
+3. Mở công cụ bằng lệnh:                               uv run vieneu-web
+   rồi vào trình duyệt: http://127.0.0.1:7860
+
+
+LƯU Ý
+-----
+- Địa chỉ 127.0.0.1:7860 chỉ mở được trên chính máy đang chạy, không gửi cho người khác dùng được.
+- Clone giọng của người khác chỉ nên làm khi có sự đồng ý của họ.
+- Muốn gỡ: xóa thư mục đã giải nén, xóa icon trên Desktop, và (nếu muốn) xóa thư mục model
+  trong C:\Users\<tên bạn>\.cache\huggingface\hub (các thư mục tên có "VieNeu" và "MOSS-Audio-Tokenizer").
