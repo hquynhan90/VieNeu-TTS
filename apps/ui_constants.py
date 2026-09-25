@@ -12,6 +12,9 @@ theme = gr.themes.Soft(
 
 css = """
 .container { max-width: 1400px; margin: auto; }
+/* Khung Kết quả: ẩn nút tốc độ "1x" có sẵn của trình phát (chỉ đổi lúc nghe thử, dễ nhầm
+   với thanh "Tốc độ đọc" bên dưới - thanh đó mới quyết định file tải về). */
+#result-audio button[aria-label^="Adjust playback speed"] { display: none !important; }
 /* Compact control rows (Voice Cloning → saved voices): caption above, one-line
    controls vertically centred so a small button sits level with the dropdown. */
 .field-caption { margin: 4px 0 -6px 0; }

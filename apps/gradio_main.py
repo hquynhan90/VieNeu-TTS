@@ -34,6 +34,39 @@ except ImportError:
     HAS_FITZ = False
     fitz = None
 
+# Các mức tốc độ đọc cho phép ở nút "Áp dụng tốc độ" (khung Kết quả).
+SPEED_CHOICES = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "1.75x", "2x"]
+
+
+def apply_speed_change(original_path, speed_choice):
+    """Đổi tốc độ file audio (giữ nguyên cao độ giọng, dùng librosa time-stretch)
+    rồi trả file mới để nghe lại / tải xuống. Luôn tính từ bản gốc 1x
+    (original_audio_state), không lũy tiến từ lần đổi tốc độ trước."""
+    if not original_path or not os.path.exists(original_path):
+        return gr.update(), gr.update(value="⚠️ Chưa có audio nào để chỉnh tốc độ. Hãy tạo giọng trước.")
+    try:
+        speed = float(str(speed_choice).rstrip("xX"))
+    except (TypeError, ValueError):
+        speed = 1.0
+    if abs(speed - 1.0) < 1e-6:
+        return gr.update(value=original_path), gr.update(value="✅ Tốc độ 1x (bản gốc).")
+    try:
+        # Import cục bộ (lười): librosa/numba kéo theo llvmlite có thể xung đột
+        # với luồng load model TTS nếu import ngay lúc khởi động app (đã xác
+        # nhận gây treo lúc "Tải Model"). Chỉ import khi thực sự bấm nút này.
+        import librosa
+        y, sr = sf.read(original_path, dtype="float32", always_2d=False)
+        if y.ndim > 1:
+            y = np.mean(y, axis=1)
+        y_stretched = librosa.effects.time_stretch(y, rate=speed)
+        out_fd, out_path = tempfile.mkstemp(suffix=f"_speed_{speed_choice}.wav")
+        os.close(out_fd)
+        sf.write(out_path, y_stretched, sr)
+        return gr.update(value=out_path), gr.update(value=f"✅ Đã áp dụng tốc độ {speed_choice}. Tải xuống sẽ lấy đúng bản này.")
+    except Exception as e:
+        return gr.update(), gr.update(value=f"❌ Lỗi khi chỉnh tốc độ: {e}")
+
+
 from apps.srt_speech import srt_to_speech
 from apps.user_voices import (
     load_user_voices, save_user_voice, delete_user_voice, list_user_voices, supports_saving,
@@ -1810,7 +1843,7 @@ EXAMPLES_LIST = [
     ["Hà Nội những ngày vào thu mang một vẻ đẹp trầm mặc và cổ kính đến lạ thường.", "Bình (nam miền Bắc)"],
 ]
 
-with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo:
+with gr.Blocks(theme=theme, css=css, title="Bình megas - TTS STUDIO", head=head_html) as demo:
     # Session ID for cancellation tracking
     session_id_state = gr.State("")
 
@@ -1819,28 +1852,11 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
 <div class="header-box">
     <h1 class="header-title">
         <span class="header-icon">🦜</span>
-        <span class="gradient-text">VieNeu-TTS Studio</span>
+        <span class="gradient-text">Bình megas - TTS STUDIO</span>
     </h1>
     <div class="model-card-content">
         <div class="model-card-item">
-            <strong>Models:</strong>
-            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS" target="_blank" class="model-card-link">VieNeu-TTS</a>
-            <span>•</span>
-            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS-v2" target="_blank" class="model-card-link">VieNeu-TTS-v2</a>
-            <span>•</span>
-            <a href="https://huggingface.co/pnnbao-ump/VieNeu-TTS-v3-Turbo" target="_blank" class="model-card-link">VieNeu-TTS-v3-Turbo</a>
-        </div>
-        <div class="model-card-item">
-            <strong>Repository:</strong>
-            <a href="https://github.com/pnnbao97/VieNeu-TTS" target="_blank" class="model-card-link">GitHub</a>
-        </div>
-        <div class="model-card-item">
-            <strong>Tác giả:</strong>
-            <a href="https://www.facebook.com/pnnbao97" target="_blank" class="model-card-link">Phạm Nguyễn Ngọc Bảo</a>
-        </div>
-        <div class="model-card-item">
-            <strong>Discord:</strong>
-            <a href="https://discord.gg/yJt8kzjzWZ" target="_blank" class="model-card-link">Tham gia cộng đồng</a>
+            <strong>CHÚC BẠN CÓ NHỮNG VIDEO VIRAL NHÉ - 0909.180365</strong>
         </div>
     </div>
 </div>
@@ -1938,7 +1954,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                     <div class="warning-banner-item">
                         <strong>🐆 Hệ máy GPU</strong>
                         <div class="warning-banner-content">
-                            <b>VieNeu-TTS-v3-Turbo</b> — 48kHz, giọng mặc định ổn định, Voice Cloning và hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]` (riêng tag cảm xúc vẫn đang thử nghiệm). Nếu gặp lỗi hãy báo với chúng tôi tại: https://discord.com/invite/yJt8kzjzWZ.
+                            <b>VieNeu-TTS-v3-Turbo</b> — 48kHz, giọng mặc định ổn định, Voice Cloning và hỗ trợ các tag cảm xúc `[cười]` `[hắng giọng]` `[thở dài]` (riêng tag cảm xúc vẫn đang thử nghiệm). Nếu gặp lỗi hãy liên hệ: 0909.180365.
                         </div>
                     </div>
                     <div class="warning-banner-item" style="background: #dcfce7; border-color: #86efac;">
@@ -2072,7 +2088,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                         gr.Markdown(
                             "Tải lên file **.srt tiếng Việt** (đã có lời và mốc thời gian): mỗi câu được đọc bằng "
                             "một giọng mẫu và ghép thành **một file audio** theo đúng mốc thời gian. Không dịch, không "
-                            "ghép video — cần các thứ đó thì dùng <a href=\"https://www.vieneu.io/#/download\" target=\"_blank\">app VieNeu</a>. "
+                            "ghép video. "
                             "Chỉ hỗ trợ VieNeu v3 (Turbo / Nano)."
                         )
                         srt_file = gr.File(label="📝 File phụ đề .srt", file_types=[".srt"], file_count="single", type="filepath")
@@ -2146,7 +2162,7 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
 
                             gr.Markdown("""
                             **💡 Mẹo nhỏ:** Nếu kết quả Zero-shot Voice Cloning chưa như ý, bạn hãy cân nhắc **Finetune (LoRA)** để đạt chất lượng tốt nhất. 
-                            Hướng dẫn chi tiết có tại file: `finetune/README.md` hoặc xem trên [GitHub](https://github.com/pnnbao97/VieNeu-TTS/tree/main/finetune).
+                            Hướng dẫn chi tiết có tại file: `finetune/README.md`.
                             """)
 
                         clone_text_input = gr.Textbox(
@@ -2211,6 +2227,9 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                 # the Voice Cloning tab always clones from the uploaded sample.
                 current_mode_state = gr.State("preset_mode")
                 clone_mode_state = gr.State("custom_mode")
+                # Bản audio gốc (1x) trước khi đổi tốc độ — nút "Áp dụng tốc độ" luôn
+                # tính lại từ bản gốc này, để đổi qua lại nhiều mức không bị lệch dồn.
+                original_audio_state = gr.State(None)
                 
                 with gr.Row():
                     btn_stop = gr.Button("⏹️ Dừng", variant="stop", scale=1, interactive=False)
@@ -2220,8 +2239,18 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
                 audio_output = gr.Audio(
                     label="Kết quả",
                     type="filepath",
-                    autoplay=True
+                    autoplay=True,
+                    elem_id="result-audio",
                 )
+                with gr.Row():
+                    speed_radio = gr.Radio(
+                        choices=SPEED_CHOICES,
+                        value="1x",
+                        label="🎚️ Tốc độ đọc",
+                        info="Nghe thử xong, chọn tốc độ rồi bấm Áp dụng. Giữ nguyên cao độ giọng, không bị méo.",
+                        scale=3,
+                    )
+                    btn_apply_speed = gr.Button("🔄 Áp dụng tốc độ", scale=1)
                 with gr.Group():
                     status_output = gr.Textbox(
                         label="Trạng thái", 
@@ -2595,6 +2624,19 @@ with gr.Blocks(theme=theme, css=css, title="VieNeu-TTS", head=head_html) as demo
         btn_generate_srt.click(lambda: gr.update(visible=False), outputs=[download_btn])
         btn_generate_srt.click(lambda: gr.update(interactive=True), outputs=btn_stop)
         srt_gen_event.then(fn=on_audio_generated, inputs=[audio_output], outputs=[download_btn])
+
+        # --- Tốc độ đọc: lưu bản gốc (1x) mỗi khi có audio mới từ bất kỳ tab nào,
+        # rồi nút "Áp dụng tốc độ" luôn tính lại từ bản gốc đó (không lũy tiến). ---
+        for _ev in (gen_event, conv_gen_event, clone_gen_event, srt_gen_event):
+            _ev.then(fn=lambda p: p, inputs=[audio_output], outputs=[original_audio_state])
+            _ev.then(lambda: gr.update(value="1x"), outputs=[speed_radio])
+
+        btn_apply_speed.click(
+            fn=apply_speed_change,
+            inputs=[original_audio_state, speed_radio],
+            outputs=[audio_output, status_output],
+        ).then(fn=on_audio_generated, inputs=[audio_output], outputs=[download_btn])
+
         # Also connect the stop button to hide download
         btn_stop.click(
             fn=lambda: gr.update(visible=False),
