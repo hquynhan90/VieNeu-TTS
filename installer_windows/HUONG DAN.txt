@@ -1,4 +1,4 @@
-﻿VIENEU TTS - TẠO GIỌNG ĐỌC TIẾNG VIỆT TRÊN MÁY TÍNH (MIỄN PHÍ, KHÔNG GIỚI HẠN)
+﻿BÌNH MEGAS - TTS STUDIO - TẠO GIỌNG ĐỌC TIẾNG VIỆT TRÊN MÁY TÍNH (MIỄN PHÍ, KHÔNG GIỚI HẠN)
 ==========================================================================
 
 Công cụ mã nguồn mở VieNeu-TTS (github.com/pnnbao97/VieNeu-TTS), giấy phép Apache 2.0.
@@ -30,10 +30,13 @@ CÁCH DÙNG (mỗi lần)
    chờ thông báo "Model đã tải thành công".
 3. Dán văn bản vào ô "Văn bản", chọn giọng ở ô "Giọng mẫu" (có 25 giọng Bắc / Trung / Nam),
    bấm "Bắt đầu".
-4. Nghe xong bấm "Tải xuống file Audio" để lưu file giọng về máy.
-5. DÙNG XONG: bấm dấu X đóng cửa sổ đen là tắt hẳn. Chỉ đóng tab trình duyệt thì công cụ VẪN CHẠY ngầm.
+4. Nghe thử. Muốn đọc nhanh/chậm hơn: chọn mức ở ô "Tốc độ đọc" (0.5x đến 2x) rồi bấm "Áp dụng tốc độ"
+   (giữ nguyên cao độ giọng, không bị méo). Có thể đổi và áp dụng nhiều lần, luôn tính từ bản gốc.
+5. Bấm "Tải xuống file Audio" để lưu file giọng (đúng bản đã chỉnh tốc độ) về máy.
+6. DÙNG XONG: bấm dấu X đóng cửa sổ đen là tắt hẳn. Chỉ đóng tab trình duyệt thì công cụ VẪN CHẠY ngầm.
 
 Mẹo: nếu trình duyệt có bật Google Dịch, hãy tắt dịch cho trang này để không bị đổi chữ.
+Nếu giọng bị rè: mở "Cài đặt nâng cao", hạ Temperature xuống khoảng 0.5 - 0.6 (thanh này tự về 0.8 khi đổi tab), hoặc thử giọng khác.
 Chèn cảm xúc bằng cách gõ [cười] [hắng giọng] [thở dài] vào văn bản (tính năng thử nghiệm).
 
 
