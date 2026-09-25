@@ -37,7 +37,7 @@ if errorlevel 1 goto sync_failed
 
 echo.
 echo [3/3] Tao icon tren Desktop ...
-powershell -NoProfile -Command "$s=(New-Object -ComObject WScript.Shell).CreateShortcut([Environment]::GetFolderPath('Desktop')+'\Mo VieNeu TTS.lnk');$s.TargetPath='%~dp0Mo VieNeu TTS.bat';$s.WorkingDirectory='%~dp0';$s.Save()"
+powershell -NoProfile -Command "$s=(New-Object -ComObject WScript.Shell).CreateShortcut([Environment]::GetFolderPath('Desktop')+'\Mo VieNeu TTS.lnk');$s.TargetPath='%~dp0Mo VieNeu TTS.bat';$s.WorkingDirectory='%~dp0';$s.IconLocation='%~dp0icon.ico,0';$s.Save()"
 
 echo.
 echo ==================================================
